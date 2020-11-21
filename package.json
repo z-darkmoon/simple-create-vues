@@ -1,0 +1,15 @@
+{
+  "name": "simple-create-vues",
+  "version": "1.0.0",
+  "description": "自定义生成vue模块 ts版本",
+  "bin": {
+    "create-vue3": "./index.ts"
+  },
+  "dependencies": {
+    "inquirer": "^7.3.3",
+    "path": "^0.12.7",
+    "shelljs": "^0.8.4"
+  },
+  "author": "zdarkmoon",
+  "license": "BSD"
+}
