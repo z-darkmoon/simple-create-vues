@@ -11,5 +11,9 @@
     "shelljs": "^0.8.4"
   },
   "author": "zdarkmoon",
-  "license": "BSD"
+  "license": "BSD",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/z-darkmoon/simple-create-vues.git"
+  }
 }
