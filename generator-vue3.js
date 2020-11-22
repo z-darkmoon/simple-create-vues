@@ -4,19 +4,22 @@
  */
 const fs = require("fs");
 const shell = require("shelljs");
-const  path = require("path");
-const  inquirer = require("inquirer");
+const path = require("path");
+const inquirer = require("inquirer");
+const chalk = require("chalk");
+const Rx = require("rxjs")
 let template = [];
- template[0]=`
-<template>
-
-
+const log = console.log;
+let pagePath = "./src/page/";
+let componentPath = "./src/components/";
+//todo 接受参数定义生成路径 接受模板
+template[0] = `<template>
 </template>
-<script lang="ts" src="./{{ name }}"></script>
-<style scoped  src="./{{ name }}"></style>
+<script lang="ts" src="./{{ name }}.ts"></script>
+<style scoped  src="./{{ name }}.scss"></style>
 `
 ;
- template[1]=`
+template[1] = `
 import { defineComponent } from 'vue'
 export default defineComponent ({
      name: "{{ name }}",
@@ -26,30 +29,29 @@ export default defineComponent ({
      },
      methods: {}
 })`;
-template[2]=``;
+template[2] = ``;
 module.exports = (configs) => {
 	const name = configs.name;
-	console.log('[-] configs',configs)
+	log(' [-] configs', configs)
 	if (!name) {
 		shell.echo("Sorry, this file requires a filename");
 		shell.exit(1);
 	}
-	console.log('__dirname',__dirname)
 	let filePath;
-	if (configs.type) {
-		 filePath=`./src/views/${name}` ;
+	if (configs.type === "page") {
+		filePath = `${pagePath}${name}`;
 	} else {
-		 filePath=`./src/components/${name}`;
+		filePath = `${componentPath}${name}`;
 	}
 	//是否存在主目录
-	try{
-		fs.accessSync(filePath,fs.constants.F_OK)
-	}catch (err){
-		console.log(' [-] filePath no exist');
-		console.log(' [-] create file dir');
-		if (err){
-			fs.mkdirSync(filePath,{ recursive: true },(err)=>{
-				console.log(err);
+	try {
+		fs.accessSync(filePath, fs.constants.F_OK)
+	} catch (err) {
+		log(chalk.yellow(' [-] filePath no exist'));
+		log(chalk.blue(' [-] create file dir'));
+		if (err) {
+			fs.mkdirSync(filePath, {recursive: true}, (err) => {
+				log(chalk.red(err));
 				shell.exit(1);
 			});
 		}
@@ -59,29 +61,15 @@ module.exports = (configs) => {
 	templatePath[0] = `${filePath}/${name}.vue`;
 	templatePath[1] = `${filePath}/${name}.ts`;
 	templatePath[2] = `${filePath}/${name}.scss`;
+	//TODO 判断是否存在 覆盖
 	for (let i = 0; i < templatePath.length; i++) {
-		try{
-			fs.accessSync(templatePath[i],fs.constants.F_OK)
-		}catch (err){
-			if (err) {
-				fs.writeFileSync(templatePath[i], template[i]);
-			}else {
-				inquirer.prompt([{
-					type: "confirm",
-					message: "overwritten?  yes/no",
-					name: "over",
-					default:true,
-				}],(config)=>{
-					if (config.over) {
-						fs.writeFileSync(templatePath[i], template[i]);
-					}
-				})
-			}
+		try {
+			fs.writeFileSync(templatePath[i], template[i]);
+			log(' [-] replace this file name in the file')
+			shell.sed("-i", "{{ name }}", configs.name, templatePath[i]);
+		} catch (err) {
+			log(chalk.red(err));
 		}
 	}
-	shell.sed("-i", "{{ name }}",configs.name, templatePath[0]);
-	shell.sed("-i", "{{ name }}", configs.name, templatePath[1]);
-
 
 };
-

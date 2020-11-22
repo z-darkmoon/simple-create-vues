@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "simple-create-vues",
-  "version": "0.0.8",
+  "version": "0.0.7",
   "description": "自定义生成vue模块 ts版本",
   "bin": {
     "create-vue3": "index.js"
@@ -9,6 +9,7 @@
   "dependencies": {
     "inquirer": "^7.3.3",
     "path": "^0.12.7",
+    "rxjs": "^6.6.3",
     "shelljs": "^0.8.4"
   },
   "author": "zdarkmoon",
@@ -22,7 +23,9 @@
   },
   "homepage": "https://github.com/z-darkmoon/simple-create-vues#readme",
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "chalk": "^4.1.0"
+  },
   "scripts": {
     "test": "create-vue3"
   },

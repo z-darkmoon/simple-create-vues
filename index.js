@@ -16,10 +16,14 @@ var questions = [
 		},
 	},
 	{
-		type: "confirm",
-		message: "page or components y=page ?",
+		type: "list",
+		message: "choice page or components ?",
 		name: "type",
-		default:true,
+		choices:[
+			"component",
+			"page"
+			],
+		default:"component",
 
 	},
 ];
