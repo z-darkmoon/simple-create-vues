@@ -5,7 +5,9 @@
 const fs = require("fs");
 const shell = require("shelljs");
 const  path = require("path");
-const templateVue=`
+const  inquirer = require("inquirer");
+let template = [];
+ template[0]=`
 <template>
 
 
@@ -14,7 +16,7 @@ const templateVue=`
 <style scoped  src="./{{ name }}"></style>
 `
 ;
-const templateTs=`
+ template[1]=`
 import { defineComponent } from 'vue'
 export default defineComponent ({
      name: "{{ name }}",
@@ -24,12 +26,12 @@ export default defineComponent ({
      },
      methods: {}
 })`;
-const templateScss=``;
+template[2]=``;
 module.exports = (configs) => {
 	const name = configs.name;
-
+	console.log('[-] configs',configs)
 	if (!name) {
-		shell.echo("Sorry, this script requires a filename");
+		shell.echo("Sorry, this file requires a filename");
 		shell.exit(1);
 	}
 	console.log('__dirname',__dirname)
@@ -39,28 +41,47 @@ module.exports = (configs) => {
 	} else {
 		 filePath=`./src/components/${name}`;
 	}
-	const fileVue = `${filePath}/${name}.vue`;
-	const fileTs = `${filePath}/${name}.ts`;
-	const fileScss = `${filePath}/${name}.scss`;
-	createDir(filePath);
-	if (true) {
-		console.log('is');
-		fs.writeFileSync(`${fileVue}`, templateVue);
-		fs.writeFileSync(`${fileTs}`, templateTs);
-		fs.writeFileSync(`${fileScss}`, templateScss);
-		shell.sed("-i", "{{ name }}",configs.name, fileVue);
-		shell.sed("-i", "{{ name }}", configs.name, fileTs);
+	//是否存在主目录
+	try{
+		fs.accessSync(filePath,fs.constants.F_OK)
+	}catch (err){
+		console.log(' [-] filePath no exist');
+		console.log(' [-] create file dir');
+		if (err){
+			fs.mkdirSync(filePath,{ recursive: true },(err)=>{
+				console.log(err);
+				shell.exit(1);
+			});
+		}
 	}
 
+	let templatePath = [];
+	templatePath[0] = `${filePath}/${name}.vue`;
+	templatePath[1] = `${filePath}/${name}.ts`;
+	templatePath[2] = `${filePath}/${name}.scss`;
+	for (let i = 0; i < templatePath.length; i++) {
+		try{
+			fs.accessSync(templatePath[i],fs.constants.F_OK)
+		}catch (err){
+			if (err) {
+				fs.writeFileSync(templatePath[i], template[i]);
+			}else {
+				inquirer.prompt([{
+					type: "confirm",
+					message: "overwritten?  yes/no",
+					name: "over",
+					default:true,
+				}],(config)=>{
+					if (config.over) {
+						fs.writeFileSync(templatePath[i], template[i]);
+					}
+				})
+			}
+		}
+	}
+	shell.sed("-i", "{{ name }}",configs.name, templatePath[0]);
+	shell.sed("-i", "{{ name }}", configs.name, templatePath[1]);
 
 
 };
-function createDir(path){
-	fs.opendir(path,(err)=>{
-		if (err){
-			fs.mkdir(path,(err)=>{
-				console.log(err);
-			})
-		}
-	})
-}
+
