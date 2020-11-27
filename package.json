@@ -1,12 +1,14 @@
 {
   "private": false,
   "name": "simple-create-vues",
-  "version": "0.0.7",
-  "description": "自定义生成vue模块 ts版本",
+  "version": "0.2.7",
+  "description": "自定义生成vue模块 ts版本 递归生成路由文件",
   "bin": {
-    "create-vue3": "index.js"
+    "create-vue3": "index.js",
+    "routers": "generator-router.js"
   },
   "dependencies": {
+    "commander": "^6.2.0",
     "inquirer": "^7.3.3",
     "path": "^0.12.7",
     "rxjs": "^6.6.3",

@@ -5,44 +5,46 @@
 const fs = require("fs");
 const shell = require("shelljs");
 const path = require("path");
-const inquirer = require("inquirer");
 const chalk = require("chalk");
-const Rx = require("rxjs")
-let template = [];
 const log = console.log;
-let pagePath = "./src/page/";
-let componentPath = "./src/components/";
-//todo 接受参数定义生成路径 接受模板
-template[0] = `<template>
-</template>
-<script lang="ts" src="./{{ name }}.ts"></script>
-<style scoped  src="./{{ name }}.scss"></style>
-`
-;
-template[1] = `
-import { defineComponent } from 'vue'
-export default defineComponent ({
-     name: "{{ name }}",
-     data() {
-        return {
-        }
-     },
-     methods: {}
-})`;
-template[2] = ``;
+const template = require('./template');
+
+//todo  接受模板
+const list = ['vue', 'ts', 'scss', 'router'];
+let pagePath = path.join('./', "src/views/");
+let componentPath = path.join('./', 'src/components/');
 module.exports = (configs) => {
+
 	const name = configs.name;
+	const fileType = configs.type || "component";
+	let realPath;
+	if (configs.path.search(/\/$/) <= -1) {
+		configs.path += '/';
+	}
+	if (configs.path) {
+		realPath = path.join('./', configs.path);
+	}else {
+		switch (fileType) {
+			case "page":
+				realPath = pagePath;
+				break;
+			case "component":
+				realPath = componentPath;
+				break;
+			case "freedom":
+				realPath = path.join('./', configs.path);
+				break;
+			default:
+				realPath = pagePath;
+		}
+	}
+
 	log(' [-] configs', configs)
 	if (!name) {
 		shell.echo("Sorry, this file requires a filename");
 		shell.exit(1);
 	}
-	let filePath;
-	if (configs.type === "page") {
-		filePath = `${pagePath}${name}`;
-	} else {
-		filePath = `${componentPath}${name}`;
-	}
+	let	filePath = `${realPath}${name}`;
 	//是否存在主目录
 	try {
 		fs.accessSync(filePath, fs.constants.F_OK)
@@ -57,18 +59,25 @@ module.exports = (configs) => {
 		}
 	}
 
-	let templatePath = [];
-	templatePath[0] = `${filePath}/${name}.vue`;
-	templatePath[1] = `${filePath}/${name}.ts`;
-	templatePath[2] = `${filePath}/${name}.scss`;
+	let templatePath = {};
+	for (let i = 0; i < list.length; i++) {
+		let pix = list[i];
+		if (list[i] === 'router') {
+			pix = 'ts'
+		}
+		templatePath[list[i]] = `${filePath}/${template.name[list[i]]}.${pix}`;
+	}
 	//TODO 判断是否存在 覆盖
-	for (let i = 0; i < templatePath.length; i++) {
-		try {
-			fs.writeFileSync(templatePath[i], template[i]);
-			log(' [-] replace this file name in the file')
-			shell.sed("-i", "{{ name }}", configs.name, templatePath[i]);
-		} catch (err) {
-			log(chalk.red(err));
+	for (let i = 0; i < list.length; i++) {
+		// log(chalk.red(' [-] '+templatePath[list[i]]));
+		if (!(fileType === 'component' && list[i] === 'router')) {
+			try {
+				fs.writeFileSync(templatePath[list[i]], template[fileType][list[i]]);
+				log(' [-] replace this file name in the file')
+				shell.sed("-i", "{{ name }}", configs.name, templatePath[list[i]]);
+			} catch (err) {
+				log(chalk.red(err));
+			}
 		}
 	}
 
