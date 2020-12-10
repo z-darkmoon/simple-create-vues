@@ -10,15 +10,16 @@ module.exports = {
 <script lang="ts" src="./script.ts"></script>
 <style scoped lang="scss" src="./style.scss"></style>
 `,
-		ts:`import { defineComponent } from 'vue'
-export default defineComponent ({
-     name: "{{ name }}",
-     data() {
-        return {
-        }
-     },
-     methods: {}
-})`,
+		ts:`import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: '{{ name }}',
+  data() {
+    return {};
+  },
+  methods: {},
+});
+`,
 		scss: '',
 		router:`export default [
   {
@@ -35,15 +36,16 @@ export default defineComponent ({
 <script lang="ts" src="./script.ts"></script>
 <style scoped lang="scss" src="./style.scss"></style>
 `,
-		ts:`import { defineComponent } from 'vue'
-export default defineComponent ({
-     name: "{{ name }}",
-     data() {
-        return {
-        }
-     },
-     methods: {}
-})`,
+		ts:`import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: '{{ name }}',
+  data() {
+    return {};
+  },
+  methods: {},
+});
+`,
 		scss: ''
 
 	},

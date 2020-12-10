@@ -1,7 +1,7 @@
 {
   "private": false,
   "name": "simple-create-vues",
-  "version": "0.2.7",
+  "version": "0.3.2",
   "description": "自定义生成vue模块 ts版本 递归生成路由文件",
   "bin": {
     "create-vue3": "index.js",

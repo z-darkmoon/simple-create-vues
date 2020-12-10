@@ -16,10 +16,9 @@ getRoutes(pagePath);
 let fileString = imports.join('\n');
 fileString += '\n\n'
 fileString += 'const routes: Array<RouteRecordRaw> = [];'
-fileString += '\nroutes.concat(\n  ';
+fileString += '\nexport default routes.concat(\n  ';
 fileString += routesNames.join(',\n  ');
-fileString += ',\n);';
-fileString += '\nexport default routes;\n'
+fileString += ',\n);\n';
 fs.writeFileSync('./src/Routers.ts', fileString);
 
 function getRoutes(filePath, fileName, modulesName) {

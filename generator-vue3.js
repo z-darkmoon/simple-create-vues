@@ -18,7 +18,7 @@ module.exports = (configs) => {
 	const name = configs.name;
 	const fileType = configs.type || "component";
 	let realPath;
-	if (configs.path.search(/\/$/) <= -1) {
+	if (configs.path && configs.path.search(/\/$/) <= -1) {
 		configs.path += '/';
 	}
 	if (configs.path) {
