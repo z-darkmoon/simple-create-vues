@@ -3,6 +3,7 @@
 生成的文件目录结构如下
 #### type 
  #####1. page
+
     ├── test
      └── index.vue
      └── router.ts
